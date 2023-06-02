@@ -13,9 +13,16 @@ public class WeatherForecastController : ControllerBase
 
     private readonly ILogger<WeatherForecastController> _logger;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    // public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(
+      Microsoft.Extensions.Options.IOptions<AppSettings> appSettings,
+      IServiceProvider serviceProvider,
+      ILogger<WeatherForecastController> logger
+    )
     {
         _logger = logger;
+        var _appSettings = appSettings.Value;
+        var _sp = serviceProvider;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
@@ -25,7 +32,8 @@ public class WeatherForecastController : ControllerBase
         {
             Date = DateTime.Now.AddDays(index),
             TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            // Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            Summary = $"{AppSettingsProvider.Settings.Fish1} says: {Summaries[Random.Shared.Next(Summaries.Length)]}"
         })
         .ToArray();
     }
