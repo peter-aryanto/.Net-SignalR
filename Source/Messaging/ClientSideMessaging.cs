@@ -13,4 +13,9 @@ public class ClientSideMessaging : Hub
   {
     await Groups.AddToGroupAsync(Context.ConnectionId, id);
   }
+
+  public async Task UnsubscribeServerMessage(string id)
+  {
+    await Groups.RemoveFromGroupAsync(Context.ConnectionId, id);
+  }
 }

@@ -45,6 +45,16 @@
         document.getElementById("serverMessageDisplayContainer").innerText = message;
       });
     }
+
+    document.unloaded = false;
+    window.onunload = window.onbeforeunload = function () {
+      if (document.unloaded) {
+        return;
+      }
+
+      connection.invoke('UnsubscribeServerMessage', subscribeServerid.toString());
+      document.unloaded = true;
+    }
   </script>
 </body>
 </html>
