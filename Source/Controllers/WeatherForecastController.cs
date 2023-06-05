@@ -44,15 +44,17 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpGet("Subscribe")]
-    public IActionResult Subscribe()
+    public IActionResult Subscribe(string id)
     {
       Task.Run(() => {
         using var svcScope = _svcScopeFactory.CreateScope();
         var clientSideMessaging = svcScope.ServiceProvider.GetRequiredService<IHubContext<Messaging.ClientSideMessaging>>();
 
-        var targetClients = clientSideMessaging.Clients.All;
+        // var targetClients = clientSideMessaging.Clients.All;
+        var targetClients = clientSideMessaging.Clients.Group(id);
         const string clientEvent = "ProcessMessageFromServer";
-        Task SendUpdateAsync(string message) => targetClients.SendAsync(clientEvent, message);
+        // Task SendUpdateAsync(string message) => targetClients.SendAsync(clientEvent, message);
+        Task SendUpdateAsync(string message) => targetClients.SendAsync(clientEvent, id, message);
 
         for (int index = 1; index <= 5; index++)
         {

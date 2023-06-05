@@ -16,6 +16,9 @@
     <div id="serverMessageDisplayContainer"></div>
   </div>
 
+  <script src="js/signalr/signalr.js"></script>
+  <!--<script src="js/signalr/signalr705.js"></script>-->
+  <script src="js/serverMessage.js"></script>
   <script>
     async function getBasicData() {
       //alert('getting basic data');
@@ -24,12 +27,24 @@
       const displayContainer = document.getElementById('basicDataDisplayContainer');
       displayContainer.innerHTML = data;
     }
+
+    var subscribeServerid = Date.now();
     function subscribeServerMessage() {
       //alert('start server message');
-      fetch('WeatherForecast/Subscribe');
+      fetch('WeatherForecast/Subscribe?id=' + subscribeServerid);
+    }
+
+    document.initServerMessage = function () {
+      // connection is initialised in serverMessage.js
+      connection.invoke('SubscribeServerMessage', subscribeServerid.toString());
+      connection.on("ProcessMessageFromServer", function (id, message) {
+        if (id != subscribeServerid) {
+          return;
+        }
+
+        document.getElementById("serverMessageDisplayContainer").innerText = message;
+      });
     }
   </script>
-  <script src="js/signalr/signalr.js"></script>
-  <script src="js/serverMessage.js"></script>
 </body>
 </html>
